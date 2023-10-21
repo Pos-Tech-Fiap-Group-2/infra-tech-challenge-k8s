@@ -31,8 +31,8 @@ jobs:
       run: terraform apply -auto-approve
 
     - name: Azure DevOps Pipeline Trigger
-      uses: Azure/pipelines@1.0
+      uses: Azure/pipelines@v1.2
       with:
-        azure-devops-project-url: https://dev.azure.com/group2-soat1/tech-challenge
-        azure-devops-pipeline-id: Pos-Tech-Fiap-Group-2.infra-tech-challenge-k8s
+        azure-devops-project-url: 'https://dev.azure.com/group2-soat1/tech-challenge'
+        azure-devops-pipeline-id: 'Pos-Tech-Fiap-Group-2.infra-tech-challenge-k8s'
         azure-devops-personal-access-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
