@@ -44,3 +44,7 @@ variable "vm_size" {
   description = "The size of the Virtual Machine."
   default     = "Standard_DS2_v2"
 }
+
+variable "subscription_id" {
+  description = "The subscription id azure account"
+}
