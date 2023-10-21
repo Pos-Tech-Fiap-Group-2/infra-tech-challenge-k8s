@@ -9,26 +9,8 @@ permissions:
   id-token: write
   contents: read
   
-jobs:
-  # execute-login-az-cli:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Az CLI login
-  #       uses: azure/login@v1
-  #       with:
-  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  
-  #     - name: Azure CLI script
-  #       uses: azure/CLI@v1
-  #       with:
-  #         azcliversion: latest
-  #         inlineScript: |
-  #           az account show
-  #           az group list
-            
-  terraform:
+jobs:          
+  setup-terraform:
     runs-on: ubuntu-latest
     env:
       working-directory: infra_terraform
@@ -43,9 +25,7 @@ jobs:
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
-      # with:
-      #   cli_config_credentials_token: ${{ secrets.AZURE_CREDENTIALS }}
-  
+    
     - name: Terraform Init
       id: init
       run: terraform init
@@ -56,11 +36,25 @@ jobs:
       run: terraform plan -no-color
       working-directory: ${{ env.working-directory }}
 
-    # - name: Terraform Apply
-    #   id: apply
-    #   run: terraform apply -auto-approve
-    #   working-directory: ${{ env.working-directory }}
+    - name: Terraform Apply
+      id: apply
+      run: terraform apply -auto-approve
+      working-directory: ${{ env.working-directory }}
 
+    - name: Save Outputs
+      run: |
+        echo "::set-output name=cluster_name::$(terraform output cluster_name)"
+      id: terraform_outputs
+
+    - name: Upload Terraform state
+      uses: actions/upload-artifact@v2
+      with:
+        name: terraform-state
+        path: .terraform
+
+  conect-azure-devops:
+    runs-on: ubuntu-latest
+    steps:
     - uses: Azure/pipelines@v1
       with:
         azure-devops-project-url: 'https://dev.azure.com/group2-soat1/tech-challenge'
