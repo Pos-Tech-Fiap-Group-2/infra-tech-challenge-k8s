@@ -1,7 +1,3 @@
-provider "azurerm" {
-  features {}
-}
-
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
@@ -15,12 +11,10 @@ resource "azurerm_kubernetes_cluster" "rg" {
   kubernetes_version  = var.kubernetes_version
 
   default_node_pool {
-    name   = "default"
-    count  = var.node_count
-    vm_size = var.vm_size
+    name       = "agentpool"
+    vm_size    = var.vm_size
+    node_count = var.node_count
     enable_auto_scaling = true
-    max_count = va.node_max_count
-    min_count = var.node_min_count
   }
 
   identity {

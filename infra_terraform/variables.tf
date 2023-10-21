@@ -23,16 +23,19 @@ variable "kubernetes_version" {
 }
 
 variable "node_count" {
-  description = "The number of nodes in the AKS agent pool."
+  type        = number
+  description = "The initial quantity of nodes for the node pool."
   default     = 2
 }
 
 variable "node_max_count" {
+  type        = number
   description = "The number maximum of nodes in the AKS agent pool."
   default     = 6
 }
 
 variable "node_min_count" {
+  type        = number
   description = "The number minimum of nodes in the AKS agent pool."
   default     = 2
 }
