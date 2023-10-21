@@ -11,6 +11,8 @@ permissions:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    env:
+      working-directory: infra_terraform
 
     steps:
     - name: Checkout
@@ -22,13 +24,19 @@ jobs:
         terraform_version: 1.0.8
 
     - name: Terraform Init
+      id: init
       run: terraform init
+      working-directory: ${{ env.working-directory }}
 
     - name: Terraform Plan
-      run: terraform plan
+      id: plan
+      run: terraform plan -no-color
+      working-directory: ${{ env.working-directory }}
 
     - name: Terraform Apply
+      id: apply
       run: terraform apply -auto-approve
+      working-directory: ${{ env.working-directory }}
 
     - name: Azure DevOps Pipeline Trigger
       uses: Azure/pipelines@v1.2
