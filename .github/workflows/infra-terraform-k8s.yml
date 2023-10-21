@@ -31,26 +31,31 @@ jobs:
       run: terraform init
       working-directory: ${{ env.working-directory }}
 
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate
+      working-directory: ${{ env.working-directory }}
+
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color
       working-directory: ${{ env.working-directory }}
 
-    - name: Terraform Apply
-      id: apply
-      run: terraform apply -auto-approve
-      working-directory: ${{ env.working-directory }}
+    # - name: Terraform Apply
+    #   id: apply
+    #   run: terraform apply -auto-approve
+    #   working-directory: ${{ env.working-directory }}
 
-    - name: Save Outputs
-      run: |
-        echo "::set-output name=cluster_name::$(terraform output cluster_name)"
-      id: terraform_outputs
+    # - name: Save Outputs
+    #   run: |
+    #     echo "::set-output name=cluster_name::$(terraform output cluster_name)"
+    #   id: terraform_outputs
 
-    - name: Upload Terraform state
-      uses: actions/upload-artifact@v2
-      with:
-        name: terraform-state
-        path: .terraform
+    # - name: Upload Terraform state
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: terraform-state
+    #     path: .terraform
 
   conect-azure-devops:
     runs-on: ubuntu-latest
