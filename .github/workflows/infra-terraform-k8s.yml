@@ -25,10 +25,9 @@ jobs:
         terraform_version: 1.0.8
 
     - name: Az CLI Login
-      uses: azure/login@v1
+      uses: Azure/login@v1
       with:
-        creds: ${{secrets.AZURE_CREDENTIALS}}
-        enable-AzPSSession: true
+        creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
     
     - name: Azure ClI script
       uses: azure/CLI@v1
