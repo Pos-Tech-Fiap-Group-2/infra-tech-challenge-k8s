@@ -22,21 +22,8 @@ jobs:
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
       with:
-        terraform_version: 1.0.8
-
-    - name: Az CLI Login
-      uses: Azure/login@v1
-      with:
-        creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
-    
-    - name: Azure ClI script
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.0.72
-        inlineScript: |
-          az account show
-          az group list
-
+        cli_config_credentials_token: ${{ secrets.AZURE_CREDENTIALS }}
+  
     - name: Terraform Init
       id: init
       run: terraform init
