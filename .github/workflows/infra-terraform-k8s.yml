@@ -33,22 +33,22 @@ jobs:
     - name: Terraform Init
       id: init
       run: terraform init
-      working-directory: ${{ env.working-directory }}
+      working-directory: ${{env.working-directory}}
 
     - name: Terraform Validate
       id: validate
       run: terraform validate
-      working-directory: ${{ env.working-directory }}
+      working-directory: ${{env.working-directory}}
 
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color
-      working-directory: ${{ env.working-directory }}
+      working-directory: ${{env.working-directory}}
 
     - name: Terraform Apply
       id: apply
       run: terraform apply -auto-approve
-      working-directory: ${{ env.working-directory }}
+      working-directory: ${{env.working-directory}}
   
     # - name: Upload Terraform state
     #   uses: actions/upload-artifact@v2
@@ -59,7 +59,7 @@ jobs:
   deploy:
     needs: setup-terraform
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -67,16 +67,20 @@ jobs:
     - name: Set up kubectl
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{secrets.TF_CLIENT_ID}}
+        tenant-id: ${{secrets.TF_TENANT_ID}}
+        subscription-id: ${{secrets.TF_SUBSCRIPTION_ID}}
 
     - name: Config kubectl
       uses: azure/aks-set-context@v3
       with:
-        cluster-name: ${{ env.RESOURCE_GROUP }}
-        resource-group: ${{ env.CLUSTER_NAME }} 
+        cluster-name: ${{env.RESOURCE_GROUP}}
+        resource-group: ${{env.CLUSTER_NAME}}
+        admin: 'false'
+        use-kubelogin: 'true'
 
     - name: Kubectl apply
-      run: kubectl apply -f ${{ env.working-directory-k8s }}
+      run: kubectl apply -f ${{env.working-directory-k8s}}
   # conect-azure-devops:
   #   runs-on: ubuntu-latest
   #   steps:
