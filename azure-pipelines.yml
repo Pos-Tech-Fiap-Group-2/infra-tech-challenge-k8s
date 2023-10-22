@@ -10,16 +10,16 @@ pool:
 
 steps:
 - script: |
-    echo '$(System.DefaultWorkingDirectory)/terraform'
+    echo '$(System.DefaultWorkingDirectory)/infra_terraform'
     terraform init
   displayName: 'Terraform Init'
 
 - script: |
-    echo '$(System.DefaultWorkingDirectory)/terraform'
+    echo '$(System.DefaultWorkingDirectory)/infra_terraform'
     terraform plan
   displayName: 'Terraform Plan'
 
 - script: |
-    echo '$(System.DefaultWorkingDirectory)/terraform'
+    echo '$(System.DefaultWorkingDirectory)/infra_terraform'
     terraform apply -auto-approve
   displayName: 'Terraform AKS Deployment'
