@@ -41,27 +41,57 @@ jobs:
       run: terraform plan -no-color
       working-directory: ${{ env.working-directory }}
 
-    # - name: Terraform Apply
-    #   id: apply
-    #   run: terraform apply -auto-approve
-    #   working-directory: ${{ env.working-directory }}
+    - name: Terraform Apply
+      id: apply
+      run: terraform apply -auto-approve
+      working-directory: ${{ env.working-directory }}
 
-    # - name: Save Outputs
-    #   run: |
-    #     echo "::set-output name=cluster_name::$(terraform output cluster_name)"
-    #   id: terraform_outputs
+    - name: Save Outputs
+      run: |
+        echo "::set-output name=cluster_name::$(terraform output cluster_name)"
+        echo "::set-output name=resource_group::$(terraform output resource_group)"
+      id: terraform_outputs
 
     # - name: Upload Terraform state
     #   uses: actions/upload-artifact@v2
     #   with:
     #     name: terraform-state
     #     path: .terraform
-
-  conect-azure-devops:
+    
+  deploy:
+    needs: setup-terraform
     runs-on: ubuntu-latest
+    env:
+      working-directory: k8s\manifests
+      ARM_CLIENT_ID: ${{secrets.TF_CLIENT_ID}}
+      ARM_CLIENT_SECRET: ${{secrets.TF_ARM_CLIENT_SECRET}}
+      ARM_SUBSCRIPTION_ID: ${{secrets.TF_SUBSCRIPTION_ID}}
+      ARM_TENANT_ID: ${{secrets.TF_TENANT_ID}}
+      
     steps:
-    - uses: Azure/pipelines@v1
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    - name: Setup AKS
+      uses: azure/login@v1
       with:
-        azure-devops-project-url: 'https://dev.azure.com/group2-soat1/tech-challenge'
-        azure-pipeline-name: 'Pos-Tech-Fiap-Group-2.infra-tech-challenge-k8s'
-        azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
+        client-id: ${{secrets.TF_CLIENT_ID}}
+        tenant-id: ${{secrets.TF_TENANT_ID}}
+        subscription-id: ${{secrets.TF_SUBSCRIPTION_ID}}
+    
+    - name: Set up kubectl
+      uses: azure/aks-set-context@v3
+      with:
+        cluster-name: '${{ steps.setup-terraform.outputs.cluster_name }}'
+        resource-group: '${{ steps.setup-terraform.outputs.resource_group }}'  
+
+    - name: Kubectl apply
+      run: kubectl apply -f your_manifests_directory
+  # conect-azure-devops:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: Azure/pipelines@v1
+  #     with:
+  #       azure-devops-project-url: 'https://dev.azure.com/group2-soat1/tech-challenge'
+  #       azure-pipeline-name: 'Pos-Tech-Fiap-Group-2.infra-tech-challenge-k8s'
+  #       azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
