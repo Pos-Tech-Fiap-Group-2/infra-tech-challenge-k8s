@@ -65,6 +65,11 @@ jobs:
       uses: actions/checkout@v2
     
     - name: Set up kubectl
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Config kubectl
       uses: azure/aks-set-context@v3
       with:
         cluster-name: ${{ env.RESOURCE_GROUP }}
