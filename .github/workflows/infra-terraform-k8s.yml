@@ -5,6 +5,16 @@ on:
     branches: [ "main" ]
   pull_request:
 
+env:
+  working-directory: infra_terraform
+  working-directory-k8s: k8s\manifests
+  ARM_CLIENT_ID: ${{secrets.TF_CLIENT_ID}}
+  ARM_CLIENT_SECRET: ${{secrets.TF_ARM_CLIENT_SECRET}}
+  ARM_SUBSCRIPTION_ID: ${{secrets.TF_SUBSCRIPTION_ID}}
+  ARM_TENANT_ID: ${{secrets.TF_TENANT_ID}}
+  RESOURCE_GROUP: "tech-challenge"
+  CLUSTER_NAME: "tech-challenge-aks-cluster"
+
 permissions:
   id-token: write
   contents: read
@@ -12,13 +22,7 @@ permissions:
 jobs:          
   setup-terraform:
     runs-on: ubuntu-latest
-    env:
-      working-directory: infra_terraform
-      ARM_CLIENT_ID: ${{secrets.TF_CLIENT_ID}}
-      ARM_CLIENT_SECRET: ${{secrets.TF_ARM_CLIENT_SECRET}}
-      ARM_SUBSCRIPTION_ID: ${{secrets.TF_SUBSCRIPTION_ID}}
-      ARM_TENANT_ID: ${{secrets.TF_TENANT_ID}}
-
+   
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -45,13 +49,7 @@ jobs:
       id: apply
       run: terraform apply -auto-approve
       working-directory: ${{ env.working-directory }}
-
-    - name: Save Outputs
-      run: |
-        echo "::set-output name=cluster_name::$(terraform output cluster_name)"
-        echo "::set-output name=resource_group::$(terraform output resource_group)"
-      id: terraform_outputs
-
+  
     # - name: Upload Terraform state
     #   uses: actions/upload-artifact@v2
     #   with:
@@ -61,13 +59,7 @@ jobs:
   deploy:
     needs: setup-terraform
     runs-on: ubuntu-latest
-    env:
-      working-directory: k8s\manifests
-      ARM_CLIENT_ID: ${{secrets.TF_CLIENT_ID}}
-      ARM_CLIENT_SECRET: ${{secrets.TF_ARM_CLIENT_SECRET}}
-      ARM_SUBSCRIPTION_ID: ${{secrets.TF_SUBSCRIPTION_ID}}
-      ARM_TENANT_ID: ${{secrets.TF_TENANT_ID}}
-      
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -75,11 +67,11 @@ jobs:
     - name: Set up kubectl
       uses: azure/aks-set-context@v3
       with:
-        cluster-name: ${{ steps.setup-terraform.outputs.cluster_name }}
-        resource-group: ${{ steps.setup-terraform.outputs.resource_group }} 
+        cluster-name: ${{ env.RESOURCE_GROUP }}
+        resource-group: ${{ env.CLUSTER_NAME }} 
 
     - name: Kubectl apply
-      run: kubectl apply -f ${{ env.working-directory }}
+      run: kubectl apply -f ${{ env.working-directory-k8s }}
   # conect-azure-devops:
   #   runs-on: ubuntu-latest
   #   steps:
