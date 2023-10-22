@@ -72,21 +72,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     
-    - name: Setup AKS
-      uses: azure/login@v1
-      with:
-        client-id: ${{secrets.TF_CLIENT_ID}}
-        tenant-id: ${{secrets.TF_TENANT_ID}}
-        subscription-id: ${{secrets.TF_SUBSCRIPTION_ID}}
-    
     - name: Set up kubectl
       uses: azure/aks-set-context@v3
       with:
-        cluster-name: '${{ steps.setup-terraform.outputs.cluster_name }}'
-        resource-group: '${{ steps.setup-terraform.outputs.resource_group }}'  
+        cluster-name: ${{ steps.setup-terraform.outputs.cluster_name }}
+        resource-group: ${{ steps.setup-terraform.outputs.resource_group }} 
 
     - name: Kubectl apply
-      run: kubectl apply -f your_manifests_directory
+      run: kubectl apply -f ${{ env.working-directory }}
   # conect-azure-devops:
   #   runs-on: ubuntu-latest
   #   steps:
