@@ -6,19 +6,20 @@ pr:
 
 pool:
   vmImage: 'ubuntu-latest'
+  name: Local
 
 steps:
 - script: |
-    echo '##vso[task.prependpath]$(System.DefaultWorkingDirectory)/terraform'
+    echo '$(System.DefaultWorkingDirectory)/infra_terraform'
     terraform init
   displayName: 'Terraform Init'
 
 - script: |
-    echo '##vso[task.prependpath]$(System.DefaultWorkingDirectory)/terraform'
+    echo '$(System.DefaultWorkingDirectory)/infra_terraform'
     terraform plan
   displayName: 'Terraform Plan'
 
 - script: |
-    echo '##vso[task.prependpath]$(System.DefaultWorkingDirectory)/terraform'
+    echo '$(System.DefaultWorkingDirectory)/infra_terraform'
     terraform apply -auto-approve
   displayName: 'Terraform AKS Deployment'
