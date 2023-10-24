@@ -48,3 +48,11 @@ variable "vm_size" {
 variable "subscription_id" {
   description = "The subscription id azure account"
 }
+
+variable "appId" {
+  description = "Azure Kubernetes Service Cluster service principal"
+}
+
+variable "password" {
+  description = "Azure Kubernetes Service Cluster password"
+}

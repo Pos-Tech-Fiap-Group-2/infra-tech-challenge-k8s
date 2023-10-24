@@ -19,9 +19,12 @@ resource "azurerm_kubernetes_cluster" "rg" {
     min_count  = var.node_min_count
   }
 
-  identity {
-    type = "SystemAssigned"
+  service_principal {
+    client_id     = var.appId
+    client_secret = var.password
   }
+
+  role_based_access_control_enabled = true
 
   tags = {
     Environment = "Production"
