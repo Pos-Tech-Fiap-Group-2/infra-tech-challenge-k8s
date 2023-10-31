@@ -38,24 +38,10 @@ projeto/
   │   ├── workflows/
   │   │   └── infra-terraform-k8s.yml
   ├── infra_terraform/
-  │   ├── main.tf
-  │   ├── providers.tf
-  |   ├── terraform.tfvars
-  |   ├── variables.tf  
-  └── k8s/
-      ├── 00-secrets.yaml
-      ├── 01-persistent-volume-db.yaml
-      ├── 02-persistent-volume-claim.yaml
-      ├── 03-configmap.yaml
-      ├── 04-configmap-db.yaml
-      ├── 05-service-db.yaml
-      ├── 06-service-lb.yaml
-      ├── 07-service-np.yaml
-      ├── 08-deployment-db.yaml
-      ├── 09-deployment.yaml
-      ├── 10-autoscale.yaml
-  |
-  └──azure-pipelines.yml    
+      ├── main.tf
+      ├── providers.tf
+      ├── terraform.tfvars
+      ├── variables.tf      
 ```
 ## Fluxo de Trabalho
 

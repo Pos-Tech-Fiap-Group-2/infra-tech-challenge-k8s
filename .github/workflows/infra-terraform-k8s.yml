@@ -58,36 +58,3 @@ jobs:
        terraform output kube_config > kubeconfig
        mkdir -p $HOME/.kube
        mv kubeconfig $HOME/.kube/config
-      
-    # - name: Upload Terraform state
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: terraform-state
-    #     path: .terraform
-    
-  deploy_manifests:
-    needs: setup-terraform
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    
-    - name: Configure kubectl
-      run: |
-        az aks get-credentials --resource-group ${{env.RESOURCE_GROUP}} --name ${{env.CLUSTER_NAME}}
-      env:
-        kubeconfig: ${{env.HOME}}/.kube/config
-
-    - name: Deploy Kubernetes Manifests
-      run: |
-        kubectl apply -f ${{env.working-directory-k8s}}
-
-  # conect-azure-devops:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: Azure/pipelines@v1
-  #     with:
-  #       azure-devops-project-url: 'https://dev.azure.com/group2-soat1/tech-challenge'
-  #       azure-pipeline-name: 'Pos-Tech-Fiap-Group-2.infra-tech-challenge-k8s'
-  #       azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
