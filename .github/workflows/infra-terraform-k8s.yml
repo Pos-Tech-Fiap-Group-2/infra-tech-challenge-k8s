@@ -58,21 +58,3 @@ jobs:
        terraform output kube_config > kubeconfig
        mkdir -p $HOME/.kube
        mv kubeconfig $HOME/.kube/config
-    
-  deploy_manifests:
-    needs: setup-terraform
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    
-    - name: Configure kubectl
-      run: |
-        az aks get-credentials --resource-group ${{env.RESOURCE_GROUP}} --name ${{env.CLUSTER_NAME}}
-      env:
-        kubeconfig: ${{env.HOME}}/.kube/config
-
-    - name: Deploy Kubernetes Manifests
-      run: |
-        kubectl apply -f ${{env.working-directory-k8s}}
