@@ -7,6 +7,6 @@ output "azurerm_kubernetes_cluster" {
 }
 
 output "kube_config" {
-   value = azurerm_kubernetes_cluster.rg.kube_config_raw
-   sensitive = true
+  value     = azurerm_kubernetes_cluster.rg.kube_config_raw
+  sensitive = true
 }

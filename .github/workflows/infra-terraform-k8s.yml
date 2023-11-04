@@ -1,19 +1,17 @@
 name: Terraform-AKS-Deployment
 
 on:
+  pull_request:
+    types: [assigned]
   push:
     branches: [ "main" ]
-  pull_request:
 
 env:
   working-directory: infra_terraform
-  working-directory-k8s: k8s_manifests
   ARM_CLIENT_ID: ${{secrets.TF_CLIENT_ID}}
   ARM_CLIENT_SECRET: ${{secrets.TF_ARM_CLIENT_SECRET}}
   ARM_SUBSCRIPTION_ID: ${{secrets.TF_SUBSCRIPTION_ID}}
   ARM_TENANT_ID: ${{secrets.TF_TENANT_ID}}
-  RESOURCE_GROUP: "tech-challenge-rg"
-  CLUSTER_NAME: "tech-challenge-aks-cluster"
 
 permissions:
   id-token: write
@@ -32,6 +30,11 @@ jobs:
       with:
         terraform_wrapper: false
     
+    - name: Terraform Fmt
+      id: fmt
+      run: terraform fmt -check
+      working-directory: ${{env.working-directory}}
+    
     - name: Terraform Init
       id: init
       run: terraform init
@@ -49,7 +52,8 @@ jobs:
 
     - name: Terraform Apply
       id: apply
-      run: terraform apply -auto-approve
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
       working-directory: ${{env.working-directory}}
 
     - name: Terraform Output

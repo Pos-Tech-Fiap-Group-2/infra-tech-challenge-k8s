@@ -56,3 +56,7 @@ variable "appId" {
 variable "password" {
   description = "Azure Kubernetes Service Cluster password"
 }
+
+variable "tenant_id" {
+  description = "Azure Database service principal tenant id"
+}
